@@ -1,376 +1,177 @@
-# Territory Fighting Game - Multiplayer 2D Combat
+# Territory Game Multiplayer
 
-A browser-based multiplayer 2D territory fighting game built with Node.js, Express, Socket.io, and HTML5 Canvas.
+A browser-based real-time multiplayer territory fighting game built with Node.js, Express, Socket.IO, and HTML5 Canvas.
 
-## 🎮 Game Overview
+Players choose a Bangladesh division, spawn into a shared arena, fight opponents in the same division, collect medikits, and clear territory to become the winner.
 
-Players join a shared world based on a grid-based territory system (inspired by Bangladesh divisions/districts). The game features real-time multiplayer action with combat mechanics, special abilities, and environmental obstacles.
+## Features
 
-### Features (MVP)
+- Real-time multiplayer synchronization with Socket.IO
+- Server-authoritative movement, combat, projectile, health, and win-state handling
+- Eight Bangladesh division arenas: Dhaka, Chattogram, Rajshahi, Khulna, Barishal, Sylhet, Rangpur, and Mymensingh
+- Division-based spawning with occupied-division fallback
+- Locked-division gameplay until enemies in the current division are defeated
+- Canvas-rendered 2D map with image assets for land, trees, players, and medikits
+- Melee sword attack, katana swipe, and fireball projectile abilities
+- Random medikit spawns with instant heal or stored medikit behavior
+- Live HUD for health, current division, medikit count, remaining players, and winner state
+- Kill feed and multiplayer join/leave updates
 
-✅ **Multiplayer System**
-- Real-time player synchronization via Socket.io
-- Player spawning in random districts
-- Live player positions and health updates
+## Tech Stack
 
-✅ **Map System**
-- 2000x2000 pixel world with grid-based territories
-- Environmental objects: mountains, buildings, trees, ponds, roads, walls
-- Nuclear power plant landmark
-- Collision detection for solid objects
-- Territory tracking (division/district system)
+- Node.js
+- Express
+- Socket.IO
+- HTML5 Canvas
+- Vanilla JavaScript
+- CSS
 
-✅ **Player Movement**
-- WASD movement controls
-- Smooth delta-time based movement
-- Map boundary collision
-- Smooth camera following player
-
-✅ **Combat System**
-- Melee sword attack (mouse click) - 10 damage, 500ms cooldown
-- Fireball ability (press F) - 25 damage, 30s cooldown
-- Health system (100 HP default)
-- Real-time hit detection and feedback
-- Kill feed display
-
-✅ **Technical Foundation**
-- Proper game loop with update/render separation
-- Server-side state management (in-memory)
-- Client-side canvas rendering
-- Basic cheat prevention (server validates combat)
-- Clean modular code structure
-
----
-
-## 🚀 Quick Start
+## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14+)
-- npm or yarn
-- Modern web browser (Chrome, Firefox, Edge)
+- Node.js 14 or newer
+- npm
+- A modern browser such as Chrome, Edge, Firefox, or Safari
 
 ### Installation
 
-1. **Clone/Navigate to project directory**
+Clone the repository:
+
 ```bash
-cd territory
+git clone https://github.com/ShahariarJibon/Territory-Game-Multiplayer.git
+cd Territory-Game-Multiplayer
 ```
 
-2. **Install dependencies**
+Install dependencies:
+
 ```bash
 npm install
 ```
 
-3. **Start the server**
+Start the server:
+
 ```bash
 npm start
 ```
 
-The server will start at `http://localhost:3000`
+Open the game:
 
-4. **Open in browser**
-- Open `http://localhost:3000` in multiple browser tabs/windows
-- Enter a player name and click "Join Game"
-- You're in! 🎮
+```text
+http://localhost:3000
+```
+
+To test multiplayer locally, open the same URL in multiple browser tabs or windows.
 
 ### Development Mode
 
-For hot-reload during development:
+Run the server with automatic restarts:
+
 ```bash
 npm run dev
 ```
-(Requires `nodemon` - installed with dependencies)
 
----
+## Controls
 
-## 🎮 How to Play
+| Control | Action |
+| --- | --- |
+| W/A/S/D | Move |
+| Mouse move | Aim |
+| Left click | Sword attack, or katana swipe while katana mode is active |
+| L | Toggle katana mode |
+| F | Cast fireball |
 
-### Controls
+## Gameplay
 
-| Key | Action |
-|-----|--------|
-| **W/A/S/D** | Move around the world |
-| **Mouse Move** | Look direction (for fireball) |
-| **Left Click** | Melee sword attack |
-| **F** | Cast Fireball ability |
+1. Enter a player name.
+2. Select a starting division.
+3. Join the game.
+4. Fight players in your current division.
+5. Defeat enemies to unlock movement into other divisions.
+6. Collect medikits to restore health or store them for later.
+7. Win by being the last surviving player or clearing the map.
 
-### Gameplay
+## Project Structure
 
-1. **Join** - Enter your name and spawn in a random district
-2. **Explore** - Navigate the world, find other players
-3. **Battle** - Attack enemies with sword or fireball
-4. **Survive** - Manage your health and territory
-5. **Territory System** - Watch which division/district you're in (top-left HUD)
-
-### Combat Mechanics
-
-- **Sword Attack**: Instant damage (10 HP) to nearby enemies. Limited range (~40px)
-- **Fireball**: Projectile that travels for 5 seconds or until it hits something (25 HP damage). 30-second cooldown
-- **Health**: 100 HP per player. Death shows in kill feed
-
----
-
-## 📁 Project Structure
-
-```
+```text
 territory/
-├── package.json                 # Node dependencies
-├── server/
-│   ├── server.js               # Main Express + Socket.io server
-│   └── gameLogic.js            # Game mechanics, map generation, collisions
-├── client/
-│   ├── index.html              # Game UI + loading screen
-│   ├── style.css               # All styling
-│   ├── game.js                 # Main game engine, canvas rendering
-│   └── socket.js               # Socket.io client manager
-├── .gitignore
-└── README.md                   # This file
+|-- client/
+|   |-- index.html      # Game UI and canvas shell
+|   |-- style.css       # Game styling and HUD layout
+|   |-- game.js         # Canvas rendering, input, UI, and client game state
+|   `-- socket.js       # Socket.IO client wrapper
+|-- server/
+|   |-- server.js       # Express server, Socket.IO events, and game loop
+|   `-- gameLogic.js    # Map generation, territory logic, collision, and combat helpers
+|-- ARCHITECTURE.md     # Technical notes
+|-- QUICKSTART.md       # Quick local setup notes
+|-- package.json        # Scripts and dependencies
+|-- .gitignore
+|-- land.png
+|-- tree.png
+|-- main char.png
+|-- enemy char.png
+|-- medikit.png
+`-- README.md
 ```
 
----
+## Socket Events
 
-## 🔌 Real-Time Multiplayer Sync
+### Client to Server
 
-### How It Works
+| Event | Purpose |
+| --- | --- |
+| `playerJoin` | Join the game with a name and preferred division |
+| `moveInput` | Send movement key state |
+| `attack` | Request a sword attack |
+| `katanaSwipe` | Request a katana arc attack |
+| `castFireball` | Request a fireball projectile |
 
-1. **Connection Phase**
-   - Client connects to server via Socket.io
-   - Server receives `playerJoin` event with player name
-   - Server assigns unique socket ID and spawn position
-   - Client receives map data and existing players
+### Server to Client
 
-2. **Continuous Sync**
-   - Client sends movement input via `moveInput` event
-   - Server updates player velocity based on input
-   - Server broadcasts full game state every frame (1000/60ms)
-   - Client receives `gameState` with all players and projectiles
-   - Client renders the new state
+| Event | Purpose |
+| --- | --- |
+| `gameInit` | Send initial player, map, and spawn data |
+| `playerJoined` | Notify clients about a new player |
+| `gameState` | Broadcast current players, projectiles, medikit, and winner data |
+| `playerHit` | Notify clients about health changes |
+| `playerDied` | Notify clients about player elimination |
+| `fireballCast` | Broadcast a new fireball |
+| `katanaSwipe` | Broadcast a katana visual effect |
+| `gameWinner` | Announce the winner |
+| `playerLeft` | Remove disconnected players |
 
-3. **Combat Events**
-   - Client sends `attack` or `castFireball` with validated data
-   - Server performs hit detection (prevents cheating)
-   - Server broadcasts damage via `playerHit` event
-   - All clients update affected player's health
+## Configuration
 
-4. **Disconnection**
-   - When player disconnects, server removes from players map
-   - Broadcasts `playerLeft` to all clients
-   - Client removes disconnected player from local render list
+The server uses port `3000` by default. You can override it with the `PORT` environment variable:
 
-### Event Flow Diagram
-
-```
-CLIENT                          SERVER                    OTHER CLIENTS
-  |                              |                              |
-  |--- playerJoin -------->|      |                              |
-  |                        | Create player                       |
-  |<----- gameInit --------|      |                              |
-  |<----- playerJoined ----|------|--- playerJoined ------->|    |
-  |                        |      |                              |
-  |--- moveInput ------>|  |      |                              |
-  |                        | Update position                     |
-  |<----- gameState -------|<-----|---- gameState ---------->|    |
-  |                        |      |                              |
-  |--- attack -------->|   |      |                              |
-  |                        | Hit detection                       |
-  |<----- playerHit -------|<-----|--- playerHit ---------->|    |
-  |                        |      |                              |
-```
-
----
-
-## 🔧 Extension Points
-
-### How to Extend This System
-
-#### 1. Add New Map Objects
-
-Edit [server/gameLogic.js](server/gameLogic.js#L20) - `generateMapObjects()`:
-
-```javascript
-// Add to generateMapObjects()
-objects.push({
-  x: Math.random() * this.mapWidth,
-  y: Math.random() * this.mapHeight,
-  width: 60,
-  height: 60,
-  type: 'myNewObject',
-  collision: true // or false
-});
-```
-
-Then add rendering in [client/game.js](client/game.js#L450) - `drawMapObjects()`:
-
-```javascript
-case 'myNewObject':
-  color = '#your-color';
-  // Draw logic
-  break;
-```
-
-#### 2. Add New Abilities
-
-Backend - [server/server.js](server/server.js#L85):
-```javascript
-socket.on('newAbility', (data) => {
-  // Validate and apply ability
-  // Broadcast results
-});
-```
-
-Frontend - [client/game.js](client/game.js#L220):
-```javascript
-handleKeyDown(e) {
-  // Add new key handler
-  case 'x':
-    this.newAbility();
-    break;
-}
-```
-
-#### 3. Add Coins/Resources System
-
-Modify [server/gameLogic.js](server/gameLogic.js#L1):
-```javascript
-// Add to player object in server.js
-const newPlayer = {
-  // ... existing properties
-  coins: 0,
-  level: 1
-};
-```
-
-#### 4. Add Real Bangladesh Map
-
-Replace grid-based territories with actual GeoJSON:
-- Use a Bangladesh GeoJSON file with division/district coordinates
-- Modify `generateTerritories()` to parse GeoJSON
-- Adjust spawn points to real division locations
-- Scale world to match geographic proportions
-
-#### 5. Add Authentication
-
-Install MongoDB:
 ```bash
-npm install mongodb jsonwebtoken bcrypt
+PORT=4000 npm start
 ```
 
-- Create login endpoint in server.js
-- Store player stats persistently
-- Add JWT token verification to socket connections
+On Windows PowerShell:
 
-#### 6. Add More Combat Mechanics
-
-- **Status effects**: poison, stun, slow
-- **Armor/defense**: damage reduction
-- **Ranged weapons**: arrows, spells
-- **Ultimate abilities**: powerful attacks with longer cooldown
-- **Combo system**: chain attacks for bonus damage
-
-#### 7. Add Territory Control
-
-Track which team controls territories:
-```javascript
-territory.controller = teamId;
-territory.captureProgress = 0;
-
-// Award bonuses to controlling team
+```powershell
+$env:PORT=4000; npm start
 ```
 
----
+## Notes
 
-## 🐛 Debugging
+- Game state is currently stored in memory, so it resets when the server restarts.
+- The server validates combat and movement state to keep gameplay fair.
+- This is a prototype foundation for a larger multiplayer territory game.
 
-### Server Console Logs
-```
-[Player Connected] <socketId>
-[Player Spawned] <playerName> at (x, y)
-[Player Disconnected] <playerName>
-```
+## Future Ideas
 
-### Client Console
-Open browser DevTools (F12) to see:
-- Socket connection status
-- Game initialization events
-- FPS counter (top-left of game)
-- Position display
+- Persistent player accounts and stats
+- Matchmaking and lobby rooms
+- Team-based territory control
+- Leaderboards
+- More weapons and abilities
+- Sound effects and improved animations
+- Mobile touch controls
+- Database-backed inventory and progression
 
-### Common Issues
+## License
 
-**Cannot connect to server**
-- Check server is running on port 3000
-- Verify firewall allows port 3000
-- Try `http://localhost:3000` not `127.0.0.1`
-
-**Players not syncing**
-- Check network tab in DevTools
-- Verify Socket.io events in console
-- Restart server if needed
-
-**Collision not working**
-- Check map objects have `collision: true`
-- Verify radius calculation in collision detection
-- Debug with console.log in `checkCollision()`
-
-**Combat hits not registering**
-- Verify distance check in `checkAttackHit()`
-- Check server validates hits (prevents client cheating)
-- Look for network latency issues
-
----
-
-## 📊 Performance Notes
-
-- **Server tick rate**: 60 updates/second
-- **Canvas rendering**: RequestAnimationFrame (variable, ~60fps)
-- **Network bandwidth**: ~100-200 bytes per update per player
-- **CPU usage**: Low (minimal physics, grid-based collisions)
-- **Supports**: 50-100+ concurrent players on single server
-
----
-
-## 📝 Code Quality Standards
-
-- ✅ Clear comments on complex logic
-- ✅ Modular code (separate files per concern)
-- ✅ Class-based organization
-- ✅ Consistent naming conventions
-- ✅ No spaghetti code
-- ✅ Proper error handling
-
----
-
-## 🎯 Future Roadmap
-
-- [ ] Real Bangladesh map with GeoJSON
-- [ ] Persistent database (MongoDB)
-- [ ] Player inventory & items
-- [ ] Coins/economy system
-- [ ] Leveling & progression
-- [ ] Team-based warfare
-- [ ] Territory capture mechanics
-- [ ] NPC enemies
-- [ ] Advanced animations
-- [ ] Particle effects
-- [ ] Sound effects
-- [ ] Mobile support
-- [ ] Dedicated matchmaking
-- [ ] Leaderboard system
-
----
-
-## 📄 License
-
-MIT
-
----
-
-## 🤝 Contributing
-
-This is a prototype. Feel free to fork and extend!
-
----
-
-**Built with ❤️ for multiplayer gaming**
-"# Territory-Game-Multiplayer" 
+ISC

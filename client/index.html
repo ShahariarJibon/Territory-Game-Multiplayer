@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Territory Fighting Game - Multiplayer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="loadingScreen" class="screen">
+    <div class="container">
+      <h1>Territory Fighting Game</h1>
+      <p>Join the battle for territorial control</p>
+      <input type="text" id="playerNameInput" placeholder="Enter your name..." maxlength="20">
+      <select id="divisionSelect" aria-label="Select spawn division">
+        <option value="div_dhaka">Dhaka</option>
+        <option value="div_chattogram">Chattogram</option>
+        <option value="div_rajshahi">Rajshahi</option>
+        <option value="div_khulna">Khulna</option>
+        <option value="div_barishal">Barishal</option>
+        <option value="div_sylhet">Sylhet</option>
+        <option value="div_rangpur">Rangpur</option>
+        <option value="div_mymensingh">Mymensingh</option>
+      </select>
+      <button id="joinButton">Join Game</button>
+    </div>
+  </div>
+
+  <div id="gameScreen" class="screen hidden">
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="hud">
+      <div id="playerStats">
+        <div>
+          <span>Health:</span>
+          <div id="healthBar">
+            <div id="healthFill"></div>
+          </div>
+          <span id="healthText">100/100</span>
+        </div>
+        <div id="playerInfo">
+          <span id="playerName">Player</span>
+          <span id="territoryInfo">Unknown Territory</span>
+        </div>
+      </div>
+
+      <div id="abilities">
+        <div id="sword" class="ability ready" title="Left Click to Attack">
+          <div class="icon">⚔</div>
+          <div>Sword (Ready)</div>
+        </div>
+        <div id="fireball" class="ability ready" title="Press F to Cast">
+          <div class="icon">🔥</div>
+          <div id="fireballText">Fireball (Ready)</div>
+          <div id="fireballCooldown"></div>
+        </div>
+      </div>
+
+      <div id="instructions">
+        <p><strong>WASD</strong> Move | <strong>L</strong> Katana | <strong>Click</strong> Hit | <strong>F</strong> Fireball</p>
+      </div>
+
+      <div id="remainingPlayers">Players Remaining: 0</div>
+      <div id="medikitPocket">Medikits: 0</div>
+      <div id="winnerBanner" class="hidden"></div>
+    </div>
+
+    <div id="killFeed"></div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="socket.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
