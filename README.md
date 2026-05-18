@@ -1,5 +1,8 @@
 # Territory Game Multiplayer
 
+
+https://territory-game-multiplayer-production.up.railway.app
+
 A browser-based real-time multiplayer territory fighting game built with Node.js, Express, Socket.IO, and HTML5 Canvas.
 
 Players choose a Bangladesh division, spawn into a shared arena, fight opponents in the same division, collect medikits, and clear territory to become the winner.
